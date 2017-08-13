@@ -41,7 +41,7 @@ module.exports = {
         /**
          * 第三方库
          */
-        vendors: ['babel-polyfill', 'history', 'lodash', 'react', 'react-dom', 'react-redux', 'react-router', 'react-router-dom', 'react-router-redux', 'redux', 'redux-actions', 'redux-oidc', 'redux-promise', 'redux-thunk'],
+        vendors: ['babel-polyfill', 'history', 'lodash', 'react', 'react-dom', 'react-redux', 'react-router', 'react-router-dom', 'react-router-redux', 'redux','redux-oidc'],
     },
 
     /**
