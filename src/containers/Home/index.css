@@ -1,0 +1,386 @@
+* {
+      margin: 0px;
+      padding: 0px
+    }
+    
+    body {
+      min-height: 100% !important;
+      margin: 0 !important;
+      overflow: hidden !important;
+      background: #fff !important;
+      font-size: 17px !important;
+      line-height: inherit !important;
+      color: rgba(0, 0, 0, 0.65) !important;
+      background-color: #fff !important;
+      text-shadow: 0 1px 5px rgba(0, 0, 0, .1) !important;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !important; 
+    }
+    
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+    }
+    
+    .overlay-background {
+      z-index: 2;
+      background-image: url(http://static.x-dva.com/resources/images/overlay-vignette.png);
+      background-size: 100% 100%;
+      opacity: 1;
+      transition: opacity .5s ease-out;
+    }
+    
+    .background ul {
+      margin: 0;
+      padding: 0;
+      z-index: 1;
+    }
+    
+    .background ul li {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: transparent;
+      background-size: cover;
+      background-position: center center;
+      background-repeat: no-repeat;
+    }
+    
+    .widgets {
+      position: absolute;
+      height: 100%;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 10;
+      color: white;
+    }
+    
+    .widgets .top-left {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+    
+    .widgets .top-left .profile {
+      margin-top: 20px;
+      display: flex;
+      align-items: center;
+      text-align: center;
+      padding: 0px 30px;
+      cursor: pointer;
+    }
+    
+    .widgets .top-left .profile .profile-avatar {
+      height: 32px;
+      width: 32px;
+      border-radius: 50%;
+      margin-right: 10px
+    }
+    
+    .widgets .top-right {
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
+    
+    .widgets .top-right .weather {
+      height: 80px;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      text-align: center;
+      padding: 0px 30px;
+      cursor: pointer;
+    }
+    
+    .widgets .top-right .weather span {
+      margin: 0px 5px;
+    }
+    
+    .widgets .center {
+      position: absolute;
+      display: block;
+      top: 50%;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    
+    .widgets .center-welcome {
+      top: 33%;
+      text-align: center;
+    }
+    
+    .widgets .center-welcome .clock h1 {
+      font-size: 800%;
+      font-weight: 400;
+      letter-spacing: 5;
+      white-space: nowrap;
+      color: white;
+    }
+    
+    .widgets .center-welcome .welcome h2 {
+      font-size: 337.5%;
+      font-weight: 400;
+      letter-spacing: 0;
+      white-space: nowrap;
+      color: white;
+    }
+    
+    .widgets .center-focus {
+      width: 100%;
+      top: 70%;
+    }
+    
+    .widgets .center .focuses::before {
+      height: 335px;
+      width: 100%;
+      position: absolute;
+      top: -200%;
+      left: 0;
+      z-index: -1;
+      background: url(http://static.x-dva.com/resources/images/overlay-focus.png) 50% 0 no-repeat;
+      background-size: contain;
+      content: ' ';
+    }
+    
+    .widgets .center .focuses ul {
+      list-style: none;
+    }
+    .widgets .center .focuses .prompt h3{
+          color: white;
+          font-size: 300%;
+          font-weight: 400;
+          text-align: center;
+    }
+    .widgets .center .focuses .prompt input{
+          width: 50%;
+          margin: 0 auto;
+          display: block;
+          background: 0;
+          border: 0;
+          border-bottom: 3px solid #fff;
+          color: #fff;
+          font-weight: 500;
+          outline: 0;
+          text-align: center;
+          font-size: 300%;  
+    }
+    .widgets .center .focuses ul li {
+      height: 60px;
+      text-align: center;
+      font-size: 200%;
+    }
+    
+    .widgets .center .focuses ul li h3 {
+      letter-spacing: 0;
+      font-size: 75%;
+      margin-bottom: 5px;
+      color: white;
+    }
+    
+    .widgets .center .focuses ul li .focus-check {
+      zoom: 200%;
+    }
+    
+    .widgets .bottom-left {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+    }
+    
+    .widgets .bottom-left .setting {
+      height: 80px;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      text-align: center;
+      padding: 0px 30px;
+      cursor: pointer;
+    }
+    
+    .widgets .bottom-left .setting .setting-icon {
+      padding-right: 10px;
+      opacity: .5;
+      transition: opacity .15s ease, filter .15s ease;
+    }
+    
+    .widgets .bottom-left .setting .setting-svg {
+      height: 18px;
+      width: 18px;
+      transition: -webkit-transform .15s linear;
+    }
+    
+    .widgets .bottom-right {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+    }
+    
+    .widgets .bottom-center {
+      position: absolute;
+      width: 50%;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    
+    .widgets .bottom-center .quote {
+      height: 80px;
+      margin: 0;
+      display: grid;
+      align-items: center;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .widgets .bottom-center .quote .icon{
+      position: relative;
+      height: 16px;
+      top: 4px;
+      left: 3px;
+    }
+
+    .widgets .bottom-center .quote .quote-source{
+      margin-left: 10px;
+    }
+    .widgets .bottom-center .quote .quote-heart{
+      margin: 0px 10px;
+    }
+
+
+    .setting-modal .ant-modal-content{
+    }
+    .setting-modal-content{
+        width: 690px;
+        display: block;
+        height: 480px;
+    }
+    .setting-modal-content .slide-bar{
+      width: 190px;
+      height: 100%;
+      float: left;
+      border-right: 1px solid #dadada;
+      padding-right: 16px;
+    }
+    .setting-modal-content .slide-bar .profile{
+      text-align: center;
+      margin-top: 15px;;
+    }
+    .setting-modal-content .slide-bar .profile img{
+      height: 80px;
+      border-radius: 50%;
+    }
+    .setting-modal-content .slide-bar .profile .slide-profile-nickname{
+      font-size: 1.25rem;
+      margin-top: 15px;
+    }
+    .setting-modal-content .slide-bar .settings{
+      padding-top: 20px;
+    }
+     .setting-modal-content .slide-bar .settings li{
+      font-size: 15px;
+      height: 40px;
+      line-height: 40px;
+     } 
+    .setting-modal-content .slide-bar .settings li i{
+      margin: 0px 15px;
+    } 
+    .setting-modal-content .content{
+      width: 500px;
+      height: 100%;
+      margin-left: 190px;
+      padding: 0px 15px;
+      padding-top: 30px;
+    }
+  
+    .setting-modal-content .content .focus-add-icon{
+      float: right;
+      margin-right: 43px;
+    }
+
+       .setting-modal-content .content .ant-divider{
+         margin: 0px 15px;
+       }
+    .setting-modal-content .content .focus-empty{
+      margin-top: 20%;
+    }
+    .setting-modal-content .content .focus-empty i{
+      font-size: 70px;
+      display: block;
+      margin: 0px auto;    
+      color: #a0a0a0;
+    }
+    .setting-modal-content .content .focus-empty p{
+      font-size: 17px;
+      text-align: center;
+      margin-top: 30px;
+    }
+    .setting-modal-content .content .ant-table-title{
+      font-size: 17px;
+      margin-left: 22px;
+    }
+
+    .focus-add-modal .form-item-focus-text{
+      margin-bottom: 0px;
+    }
+    .focus-add-modal .form-item-focus-input{
+      border: none;
+      border-radius: 0px;
+      border-bottom: 1px solid #a0a0a0;
+      font-size: 17px;
+    }
+    .focus-add-modal .form-item-focus-input:focus,.focus-add-modal .has-error .ant-input:focus{
+      outline: none;
+      outline-style: none;
+      box-shadow:none;
+    }
+    .focus-add-modal .ant-form-explain{
+      display: none !important;
+    }
+    .ant-message-notice-content {
+        padding: 8px 16px;
+        border-radius: 4px;
+        box-shadow: none;
+        background: rgba(0, 0, 0, 0.5) !important;
+        display: inline-block;
+        pointer-events: all;
+        color: white;
+    }
+
+
+
+        
+    ::-webkit-scrollbar-corner {
+        background-color: transparent;
+    }
+
+    ::-webkit-scrollbar-button {
+        width: 0;
+        height: 0;
+        display: none;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        width: 2px;
+        background-color: rgba(0,0,0,.2);
+        border-radius: 2px;
+    }
+
+    ::-webkit-scrollbar {
+        width: 2px;
+        height: 2px;
+    }
+
+    ::-webkit-scrollbar-track {
+        width: 5px;
+    }
+
+    ::-webkit-scrollbar:hover {
+        background-color: transparent;
+    }
