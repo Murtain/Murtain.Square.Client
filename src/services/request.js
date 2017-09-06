@@ -1,6 +1,6 @@
-
 import NProgress from 'nprogress';
-import { message } from 'antd';
+import { UserFriendlyError, NetWorkError, FetchError, FetchTimeoutError, JsonSerializeError } from './errors';
+
 import config from '../configs';
 
 
@@ -68,24 +68,28 @@ function filterStatus(response) {
     }
 
     return response.json().then(resp => {
-        console.warn('[fetch-filter-status-fetch-error  ] ');
-        throw new fetchError(resp.error.code, resp.error.message);
+        console.warn('[fetch-filter-status-user-friendly-error  ] ');
+        throw new UserFriendlyError(resp.error.code, resp.error.message);
     }).catch(e => {
 
-        if (e instanceof fetchError) {
+        if (e instanceof UserFriendlyError) {
             throw e;
         }
         console.warn('[fetch-filter-status-network-error  ] ');
-        throw new netWorkError(response.status);
+        throw new NetWorkError(response.status);
     });
 
 }
 
 function filterJSON(response) {
     console.warn('[fetch-filter-serializer-begin     ] ');
-    return response.json().catch(e => {
-        return { response }
+
+    return response.json().then(data => {
+        return { data };
+    }).catch(e => {
+        return { response };
     });
+
 }
 
 function filterLogger(response) {
@@ -95,17 +99,13 @@ function filterLogger(response) {
 }
 
 function filterError(error) {
-    console.warn('[fetch-filter-error-begin     ] ', error);
-    if (error instanceof fetchError) {
-        console.warn('[fetch-filter-error   ] ', error.code);
-        return { error };
+
+    console.warn('[fetch-filter-error     ] ',error);
+    if (error instanceof TypeError) {
+        return { error: new FetchError(error.message) };
     }
 
-    if (error instanceof netWorkError) {
-        console.warn('[fetch-filter-error   ] ', error.status);
-        return { error };
-    }
-
+    return { error };
 }
 
 function stopProgress(response) {
@@ -124,7 +124,7 @@ function _fetch(fetch_promise, timeout) {
     var abort_promise = new Promise(function (resolve, reject) {
         abort_fn = function () {
             NProgress.done(true);
-            reject(new Error('request timeout.'));
+            reject(new FetchTimeoutError);
         };
     });
 
@@ -141,11 +141,3 @@ function _fetch(fetch_promise, timeout) {
 }
 
 
-function fetchError(code, message) {
-    this.code = code;
-    this.message = message;
-}
-
-function netWorkError(status) {
-    this.status = status;
-}

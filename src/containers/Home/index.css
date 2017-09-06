@@ -180,7 +180,7 @@
     .widgets .center .focuses ul li h3 {
       letter-spacing: 0;
       font-size: 75%;
-      margin-bottom: 5px;
+      margin-bottom: 15px;
       color: white;
     }
     
@@ -305,8 +305,8 @@
     }
     .setting-modal-content .content .focus-row-underline{
       position: absolute;
-      left: 20px;
-      width: 410px;
+      left: 50px;
+      width: 400px;
       height: 1px;
       border-top: 1px solid rgba(175, 175, 175, 0.5);
     }

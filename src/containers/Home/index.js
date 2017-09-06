@@ -27,6 +27,7 @@ class HomePage extends Component {
             'render_component_add_focus_modal',
 
             'fetch_focuses',
+            'fetch_focus_now',
             'fetch_post_focus_add',
             'fetch_delete_focus_remove',
             'fetch_welcome_time',
@@ -56,6 +57,7 @@ class HomePage extends Component {
         this.fetch_welcome_time();
         this.fetch_sentence_random();
         this.fetch_weather();
+        this.fetch_focus_now();
 
     }
     componentWillUnmount() {
@@ -85,6 +87,10 @@ class HomePage extends Component {
         const { dispatch } = this.props;
         dispatch({ type: ACTION_TYPE.INDEX_FOCUSES_FETCH });
     }
+    fetch_focus_now() {
+        const { dispatch } = this.props;
+        dispatch({ type: ACTION_TYPE.INDEX_FETCH_FOCUSES_NOW });
+    }
 
     fetch_post_sentence_heart() {
         const { dispatch, sentence_heart_icon } = this.props;
@@ -110,9 +116,9 @@ class HomePage extends Component {
         dispatch({ type: ACTION_TYPE.INDEX_FOCUS_REMOVE, payload: { key: key } });
     }
 
-    fetch_put_focus_complete(key) {
+    fetch_put_focus_complete(key,selected) {
         const { dispatch } = this.props;
-        dispatch({ type: ACTION_TYPE.INDEX_FOCUS_COMPLETE, payload: { key: key } });
+        dispatch({ type: ACTION_TYPE.INDEX_FOCUS_COMPLETE, payload: { key: key, selected: selected } });
     }
 
     fetch_put_focus_pin(key) {
@@ -158,8 +164,8 @@ class HomePage extends Component {
         this.fetch_delete_focus_remove(key);
     }
 
-    event_btn_click_complete_focus(key) {
-        this.fetch_put_focus_complete(key);
+    event_btn_click_complete_focus(key, selected) {
+        this.fetch_put_focus_complete(key, selected);
     }
 
     event_btn_click_pin_focus(key) {
@@ -171,17 +177,9 @@ class HomePage extends Component {
     }
 
     render_component_focus() {
-        const { user } = this.props;
-        if (user == null) {
-            /*return (
-                <div className="focuses">
-                    <div className="prompt">
-                        <h3>今天要做些什么？</h3>
-                        <input type="text" />
-                    </div>
-                </div>
-            )*/
-
+        const { user, focus_now } = this.props;
+        
+        if (!user || !focus_now) {
             return null;
         }
 
@@ -191,10 +189,9 @@ class HomePage extends Component {
                     <li className="focus">
                         <h3>TODAY</h3>
                         <span className="focus-group">
-                            {/*<input className="focus-check" type="checkbox" />*/}
                             <span className="focus-text">
-                                com.x-dva.square
-                                    </span>
+                                {focus_now}
+                            </span>
                         </span>
                     </li>
                 </ul>
@@ -236,7 +233,7 @@ class HomePage extends Component {
 
         const { sentence, sentence_heart_icon } = this.props;
 
-        if (sentence == null || sentence_heart_icon == undefined) {
+        if (sentence || sentence_heart_icon) {
             return null;
         }
         return (
@@ -256,7 +253,7 @@ class HomePage extends Component {
 
         const { weather } = this.props;
 
-        if (weather == null || weather == undefined) {
+        if (weather || weather) {
             return null;
         }
 
@@ -329,20 +326,21 @@ class HomePage extends Component {
                 pagination={false}
                 scroll={{ x: false, y: 370 }}
                 rowSelection={{
-                    onChange: (selectedRowKeys, selectedRows) => {
-                        console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-                    },
+                    selectedRowKeys: Array.from(focus_today.filter(x => { return x.status == "Completed" })).map(x => x.key),
+                    onSelect: (record, selected, selectedRows) => {
+                        record && event_btn_click_complete_focus(record.key, selected);
+                    }
                 }} columns={[{
                     key: '-1',
                     dataIndex: 'content',
-                    width: 250,
+                    width: 295,
                     render: (text, record) => <a className={record_completed_class(record)} href="#">{text}</a>,
                 }, {
                     key: '-2',
                     render: (text, record) => (
                         <span>
                             <Popconfirm title="确定要删除这个任务么？" onConfirm={() => { event_btn_click_remove_focus_comfirm(record.key) }} okText="确定" cancelText="取消">
-                                <a className={record_completed_class(record)} href="#">
+                                <a className={record_completed_class(record)} disabled={record_completed(record)} href="#">
                                     <Icon type="delete" />
                                 </a>
                             </Popconfirm>
@@ -352,12 +350,12 @@ class HomePage extends Component {
                                     <Icon className={record_pin_class(record)} type="pushpin-o" />
                                 </a>
                             </Tooltip>
-                            <span className="ant-divider" />
+                            {/*<span className="ant-divider" />
                             <Tooltip title={"任务完成"}>
                                 <a className={record_completed_class(record)} disabled={record_completed(record)} onClick={() => event_btn_click_complete_focus(record.key)} href="#">
                                     <Icon type="check" />
                                 </a>
-                            </Tooltip>
+                            </Tooltip>*/}
                         </span>
                     ),
                 }, {
@@ -522,6 +520,7 @@ function map_state_to_props(state) {
         sentence_heart_icon,
         settings_modal_visbale,
         focus,
+        focus_now,
         focus_today,
         focus_table_loading,
         focus_modal_visbale,
@@ -536,6 +535,7 @@ function map_state_to_props(state) {
         welcome_date: welcome_date,
 
         focus: focus,
+        focus_now: focus_now,
         focus_today: focus_today,
         focus_table_loading: focus_table_loading,
         focus_modal_visbale: focus_modal_visbale,

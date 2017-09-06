@@ -18,9 +18,10 @@ export function fetch_focus_delete(id) {
     return fetchRequest.remove(config.domain + '/focus/' + id);
 }
 
-
 export function fetch_focus() {
-    return fetchRequest.get(config.domain + '/focus').then(data => {
-        return { data };
-    });
+    return fetchRequest.get(config.domain + '/focus');
+}
+
+export function fetch_focus_now() {
+    return fetchRequest.get(config.domain + '/focus-star');
 }

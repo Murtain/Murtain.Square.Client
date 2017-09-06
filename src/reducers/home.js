@@ -59,7 +59,9 @@ export default function reducer(state = initialState, action) {
 
         case ACTION_TYPE.INDEX_FETCH_FOCUSES_SUCCEED:
             return Object.assign({ ...state }, { focus_table_loading: false, focus_today: action.payload });
-            
+
+        case ACTION_TYPE.INDEX_FETCH_FOCUSES_NOW_SUCCEED:
+            return Object.assign({ ...state }, { focus_now: action.payload });
         default:
             return state;
     }
