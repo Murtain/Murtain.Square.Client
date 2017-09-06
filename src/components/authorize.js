@@ -20,13 +20,11 @@ class Authorize extends Component {
 
     }
     signin() {
-
         event.preventDefault();
         const { dispatch } = this.props;
         userManager.signinPopup().then(function (user) {
             // dispatch(push('/' + '?_k=' + Math.random().toString(32).substr(2).slice(2, 8)));
             // window.location.reload();
-
             dispatch({ type: ACTION_TYPE.OIDC_LOAD_USER });
         });
     }

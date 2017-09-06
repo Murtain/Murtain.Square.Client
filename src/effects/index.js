@@ -1,9 +1,10 @@
 import { take, put, select, call, fork, takeLatest } from 'redux-saga/effects';
 import { message } from 'antd';
 
-import * as date_managaer from '../services/dateExtensions';
+import * as date_manager from '../services/dateExtensions';
 import * as square_service from '../services/avatar';
-import * as todo_service from '../services/todos/todo-services';
+import * as focus_service from '../services/focus';
+import userManager from '../services/userManager';
 
 
 import * as ACTION_TYPE from '../constants';
@@ -11,30 +12,25 @@ import * as ACTION_TYPE from '../constants';
 export const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 
-function* fetch_todos(payload) {
-
-  try {
-
-    yield put({ type: ACTION_TYPE.TODOS_FETCH_START });
-
-    const todos = yield call(todo_service.fetch_todos, payload);
-
-    yield put({ type: ACTION_TYPE.TODOS_FETCH_SUCCEEDED, payload: todos });
-
-
-  } catch (e) {
-    yield put({ type: ACTION_TYPE.TODOS_FETCH_FAILED, message: e.message });
-  }
-}
-
 function* fetch_user_info() {
-  const user = yield call(todo_service.get_user);
+
+  const { user, error } = userManager.getUser(user => { return { user } }).catch(error => { return { error } });
+  if (error) {
+    return fetchError(error);
+  }
+
   yield put({ type: 'redux-oidc/USER_FOUND', payload: user });
 }
 
+
 function* fetch_sentence_random() {
-  const sentence = yield call(square_service.fetch_sentence_random);
-  yield put({ type: ACTION_TYPE.INDEX_SENTENCE_FETCH_SUCCEED, payload: sentence });
+
+  const { data, error } = yield call(square_service.fetch_sentence_random);
+  console.log(error);
+  if (error) {
+    return fetchError(error);
+  }
+  yield put({ type: ACTION_TYPE.INDEX_SENTENCE_FETCH_SUCCEED, payload: data });
 }
 
 function* fetch_post_sentence_heart(action) {
@@ -57,45 +53,87 @@ function* fetch_post_sentence_heart(action) {
 
 function* fetch_welcome_time() {
 
-  const welcome_date = yield call(date_managaer.get_date);
-  const welcome_time = yield call(date_managaer.get_time);
-  const welcome_text = yield call(date_managaer.get_welcome);
+  const welcome_date = yield call(date_manager.get_date);
+  const welcome_time = yield call(date_manager.get_time);
+  const welcome_text = yield call(date_manager.get_welcome);
 
   yield put({ type: ACTION_TYPE.INDEX_TIME_FETCH_SUCCESSED, payload: { welcome_time: welcome_time, welcome_text: welcome_text, welcome_date: welcome_date } });
 
 }
 
 function* fetch_weather() {
-  const weather = yield call(square_service.fetch_weather_with_ip);
-  yield put({ type: ACTION_TYPE.INDEX_WEATHER_FETCH_SUCCEED, payload: weather });
+  const { data, error } = yield call(square_service.fetch_weather_with_ip);
+  if (error) {
+    return fetchError(error);
+  }
+
+  yield put({ type: ACTION_TYPE.INDEX_WEATHER_FETCH_SUCCEED, payload: data });
 }
 
 function* fetch_focuses() {
+
   yield put({ type: ACTION_TYPE.INDEX_FETCH_FOCUSES_START });
-  yield delay(2000);
-  yield put({ type: ACTION_TYPE.INDEX_FETCH_FOCUSES_SUCCEED });
+
+  const { data, error } = yield call(focus_service.fetch_focus);
+
+  if (error) {
+    return fetchError(error);
+  }
+  yield put({ type: ACTION_TYPE.INDEX_FETCH_FOCUSES_SUCCEED, payload: data });
 }
 
-function* fetch_put_focus_complete() {
+function* fetch_focus_complate_put(action) {
+  const { error } = yield call(focus_service.fetch_focus_complate_put, action.payload.key);
+
+  if (error) {
+    return fetchError(error);
+  }
+
+  message.success('已将任务标记完成');
+
+  yield call(fetch_focuses);
+}
+
+function* fetch_focus_delete(action) {
+
+  const { error } = yield call(focus_service.fetch_focus_delete, action.payload.key);
+
+  if (error) {
+    return fetchError(error);
+  }
+
+  message.success('已将任务从清单中移除');
+
+  yield call(fetch_focuses);
 
 }
 
-function* fetch_delete_focus_remove(){
+function* fetch_focus_star_put(action) {
+
+  const { error } = yield call(focus_service.fetch_focus_star_put, action.payload.key);
+
+  if (error) {
+    return fetchError(error);
+  }
+
+  message.success('已将任务固定到桌面');
+  yield call(fetch_focuses);
 
 }
 
-function* fetch_put_focus_star(){
+function* fetch_focus_post(action) {
 
-}
+  const { error } = yield call(focus_service.fetch_focus_post, { content: action.payload.focus });
 
-function* fetch_post_focus_add(action) {
+  if (error) {
+    return fetchError(error);
+  }
 
   yield put({ type: ACTION_TYPE.INDEX_FOCUS_ADD_SUCCEED, payload: action.payload.focus });
   message.success('成功添加任务到清单');
 
-  yield put({ type: ACTION_TYPE.INDEX_FETCH_FOCUSES_START });
-  yield delay(2000);
-  yield put({ type: ACTION_TYPE.INDEX_FETCH_FOCUSES_SUCCEED });
+  yield call(fetch_focuses);
+
 }
 
 function* toggle_settings_modal(action) {
@@ -106,6 +144,23 @@ function* toggle_focus_add_modal(action) {
   yield put({ type: ACTION_TYPE.INDEX_FOCUS_MODAL_TOGGLE_SUCCEED, payload: action.payload.focus_modal_visbale });
 }
 
+
+function fetchError(error) {
+
+  console.log(error);
+
+  if (error.message) {
+    message.error(error.message);
+    return;
+  }
+
+  if (error.status) {
+    message.error('网络繁忙，请稍候再试。');
+    return;
+  }
+
+  return message.error(error);
+}
 
 export default function* rootSaga() {
 
@@ -119,7 +174,11 @@ export default function* rootSaga() {
   yield takeLatest(ACTION_TYPE.INDEX_SETTINGS_MODAL_TOGGLE, toggle_settings_modal);
 
   yield takeLatest(ACTION_TYPE.INDEX_FOCUS_MODAL_TOGGLE, toggle_focus_add_modal);
-  yield takeLatest(ACTION_TYPE.INDEX_FOCUS_ADD, fetch_post_focus_add);
+
+  yield takeLatest(ACTION_TYPE.INDEX_FOCUS_ADD, fetch_focus_post);
+  yield takeLatest(ACTION_TYPE.INDEX_FOCUS_REMOVE, fetch_focus_delete);
+  yield takeLatest(ACTION_TYPE.INDEX_FOCUS_COMPLETE, fetch_focus_complate_put);
+  yield takeLatest(ACTION_TYPE.INDEX_FOCUS_PIN, fetch_focus_star_put);
   yield takeLatest(ACTION_TYPE.INDEX_FOCUSES_FETCH, fetch_focuses);
 
 }

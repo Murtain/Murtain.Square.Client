@@ -4,12 +4,12 @@ import config from '../configs';
 
 export function fetch_sentence_random() {
     return fetchRequest.get(config.square_sentence_url).then(data => {
-        return data;
+        return { data };
     });
 }
 
 export function fetch_weather_with_ip() {
     return fetchRequest.get(config.square_weather_url).then(data => {
-        return data;
+        return { data };
     });
 }

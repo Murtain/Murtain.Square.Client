@@ -299,14 +299,24 @@
       padding-top: 30px;
     }
   
-    .setting-modal-content .content .focus-add-icon{
+    .setting-modal-content .content .focus-action-icon{
       float: right;
-      margin-right: 43px;
+      margin-right: 40px;
+    }
+    .setting-modal-content .content .focus-row-underline{
+      position: absolute;
+      left: 20px;
+      width: 410px;
+      height: 1px;
+      border-top: 1px solid rgba(175, 175, 175, 0.5);
+    }
+    .setting-modal-content .content .focus-completed{
+      color: gray;
     }
 
-       .setting-modal-content .content .ant-divider{
+    .setting-modal-content .content .ant-divider{
          margin: 0px 15px;
-       }
+    }
     .setting-modal-content .content .focus-empty{
       margin-top: 20%;
     }
@@ -325,7 +335,16 @@
       font-size: 17px;
       margin-left: 22px;
     }
-
+    .setting-modal-content .focus-add-icon{    
+      position: absolute;
+      right: 40px;
+    }
+    .setting-modal-content .focus-action-icon-pushpin{
+      transform: rotate(90deg);
+    }
+    .setting-modal-content .focus-action-icon-pushpin.focus-pin {
+      transform: rotate(45deg);
+    }
     .focus-add-modal .form-item-focus-text{
       margin-bottom: 0px;
     }

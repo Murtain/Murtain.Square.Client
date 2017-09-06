@@ -27,6 +27,8 @@ class HomePage extends Component {
             'render_component_add_focus_modal',
 
             'fetch_focuses',
+            'fetch_post_focus_add',
+            'fetch_delete_focus_remove',
             'fetch_welcome_time',
             'fetch_sentence_random',
             'fetch_weather',
@@ -39,6 +41,9 @@ class HomePage extends Component {
             'event_btn_click_refresh',
             'event_btn_click_settings',
             'event_btn_click_add_focus',
+            'event_btn_click_complete_focus',
+            'event_btn_click_pin_focus',
+            'event_btn_click_remove_focus_comfirm',
 
         ].forEach(func => {
             this[func] = this[func].bind(this);
@@ -95,6 +100,25 @@ class HomePage extends Component {
         dispatch({ type: ACTION_TYPE.INDEX_FOCUS_ADD, payload: { focus: focus } });
     }
 
+    fetch_delete_focus_remove(key) {
+        const { dispatch } = this.props;
+        dispatch({ type: ACTION_TYPE.INDEX_FOCUS_REMOVE, payload: { key: key } });
+    }
+
+    fetch_delete_focus_remove(key) {
+        const { dispatch } = this.props;
+        dispatch({ type: ACTION_TYPE.INDEX_FOCUS_REMOVE, payload: { key: key } });
+    }
+
+    fetch_put_focus_complete(key) {
+        const { dispatch } = this.props;
+        dispatch({ type: ACTION_TYPE.INDEX_FOCUS_COMPLETE, payload: { key: key } });
+    }
+
+    fetch_put_focus_pin(key) {
+        const { dispatch } = this.props;
+        dispatch({ type: ACTION_TYPE.INDEX_FOCUS_PIN, payload: { key: key } });
+    }
 
     toggle_modal_settings() {
         const { dispatch, settings_modal_visbale } = this.props;
@@ -125,7 +149,21 @@ class HomePage extends Component {
     }
 
     event_btn_click_add_focus() {
+
         this.toggle_modal_add_focus();
+
+    }
+
+    event_btn_click_remove_focus_comfirm(key) {
+        this.fetch_delete_focus_remove(key);
+    }
+
+    event_btn_click_complete_focus(key) {
+        this.fetch_put_focus_complete(key);
+    }
+
+    event_btn_click_pin_focus(key) {
+        this.fetch_put_focus_pin(key);
     }
 
     render_component_authorize() {
@@ -248,13 +286,30 @@ class HomePage extends Component {
 
     render_component_settings_modal() {
 
-        const { settings_modal_visbale, user, focus_table_loading } = this.props;
+        const { settings_modal_visbale, user, focus_table_loading, focus_today } = this.props;
+
         const event_btn_click_add_focus = this.event_btn_click_add_focus;
+        const event_btn_click_remove_focus_comfirm = this.event_btn_click_remove_focus_comfirm;
+        const event_btn_click_complete_focus = this.event_btn_click_complete_focus;
+        const event_btn_click_pin_focus = this.event_btn_click_pin_focus;
 
         if (settings_modal_visbale != true || user == null) {
             return null;
         }
 
+        function record_completed_class(record, target_class, default_class) {
+
+            return record.status == 'Completed' ? target_class || 'focus-completed' : default_class || '';
+        }
+
+        function record_pin_class(record, target_class, default_class) {
+
+            return record.status == 'Focus' ? target_class || 'focus-action-icon-pushpin focus-pin' : default_class || 'focus-action-icon-pushpin';
+        }
+
+        function record_completed(record) {
+            return record.status == 'Completed';
+        }
         const focus_table = (
             <Table
                 title={function (r) {
@@ -277,37 +332,42 @@ class HomePage extends Component {
                     onChange: (selectedRowKeys, selectedRows) => {
                         console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
                     },
-                    getCheckboxProps: record => ({
-                        disabled: record.name === 'Disabled User',    // Column configuration not to be checked
-                    }),
                 }} columns={[{
-                    key: '1',
-                    dataIndex: 'focus',
-                    render: text => <a href="#">{text}</a>,
+                    key: '-1',
+                    dataIndex: 'content',
+                    width: 250,
+                    render: (text, record) => <a className={record_completed_class(record)} href="#">{text}</a>,
                 }, {
-                    key: '2',
+                    key: '-2',
                     render: (text, record) => (
                         <span>
-                            <Popconfirm title="确定要删除这个任务么？" okText="确定" cancelText="取消">
-                                <a href="#"><Icon type="delete" /></a>
+                            <Popconfirm title="确定要删除这个任务么？" onConfirm={() => { event_btn_click_remove_focus_comfirm(record.key) }} okText="确定" cancelText="取消">
+                                <a className={record_completed_class(record)} href="#">
+                                    <Icon type="delete" />
+                                </a>
                             </Popconfirm>
                             <span className="ant-divider" />
-                            <a href="#"><Icon type="star-o" /></a>
+                            <Tooltip title={"固定到首页"} >
+                                <a className={record_completed_class(record)} disabled={record_completed(record)} onClick={() => event_btn_click_pin_focus(record.key)} href="#">
+                                    <Icon className={record_pin_class(record)} type="pushpin-o" />
+                                </a>
+                            </Tooltip>
+                            <span className="ant-divider" />
+                            <Tooltip title={"任务完成"}>
+                                <a className={record_completed_class(record)} disabled={record_completed(record)} onClick={() => event_btn_click_complete_focus(record.key)} href="#">
+                                    <Icon type="check" />
+                                </a>
+                            </Tooltip>
                         </span>
                     ),
-                }]} dataSource={[{
-                    key: '1',
-                    focus: 'com.x-dva.square',
                 }, {
-                    key: '2',
-                    focus: 'com.x-dva.square-backend',
-                }, {
-                    key: '3',
-                    focus: '.net core 博客',
-                }, {
-                    key: '4',
-                    focus: 'Go to bad before 12:00',
-                }]} />
+                    key: '-3',
+                    width: 0,
+                    render: (text, record) => (
+                        <div className={record_completed_class(record, 'focus-row-underline')}></div>
+                    ),
+                }
+                ]} dataSource={focus_today} />
         );
 
         const focus_empty = (
@@ -360,7 +420,6 @@ class HomePage extends Component {
                 e.preventDefault();
                 form.validateFields((err, values) => {
                     if (!err) {
-                        console.log('Received values of form: ', values);
                         this.fetch_post_focus_add(values.focus)
                     }
                 });
@@ -370,7 +429,7 @@ class HomePage extends Component {
                     <Form.Item className="form-item-focus-text">
                         {getFieldDecorator('focus', {
                             rules: [{ required: true, message: '　' }],
-                        })(<Input className="form-item-focus-input" autoComplete="off" placeholder="按Enter键完成添加" />)
+                        })(<Input className="form-item-focus-input" autoComplete="off" autoFocus placeholder="按Enter键完成添加" />)
                         }
                     </Form.Item>
                 </Form>
@@ -463,6 +522,7 @@ function map_state_to_props(state) {
         sentence_heart_icon,
         settings_modal_visbale,
         focus,
+        focus_today,
         focus_table_loading,
         focus_modal_visbale,
         weather
@@ -476,6 +536,7 @@ function map_state_to_props(state) {
         welcome_date: welcome_date,
 
         focus: focus,
+        focus_today: focus_today,
         focus_table_loading: focus_table_loading,
         focus_modal_visbale: focus_modal_visbale,
 

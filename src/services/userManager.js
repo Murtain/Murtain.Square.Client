@@ -60,7 +60,7 @@ const userManager = createUserManager({
      *  The features parameter to window.open for the popup signin window.
      * 
      */
-    popupWindowFeatures: 'top=nInt,left=nInt,width=nInt,height=nInt,location=yes,menubar=no,resizable=yes,scrollbars=yes,status=no,toolbar=no',
+    popupWindowFeatures: '',
     /**
      *  [Optional] string, default: '_blank' 
      * 

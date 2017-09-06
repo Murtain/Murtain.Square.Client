@@ -21,8 +21,3 @@ export function fetch_todos(payload) {
     });
 }
 
-export function get_user() {
-    return userManager.getUser(user => {
-        return user;
-    })
-}

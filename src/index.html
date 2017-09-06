@@ -4,6 +4,12 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>时间广场</title>
+  <script>
+    const openWindow = window.open;
+    window.open = function (url, target, features) {
+      return openWindow(url, target);
+    }
+  </script>
 </head>
 
 <body>

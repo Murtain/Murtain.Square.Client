@@ -11,7 +11,7 @@ export function get(url) {
 }
 
 export function post(url, body) {
-
+    console.warn('[fetch-post-body-begin     ] ');
     var fetchPromise = fetch(url,
         {
             method: 'POST',
@@ -27,7 +27,7 @@ export function post(url, body) {
 }
 
 export function put(url, body) {
-
+    console.warn('[fetch-put-begin       ] ');
     var fetchPromise = fetch(url,
         {
             method: 'PUT',
@@ -39,11 +39,11 @@ export function put(url, body) {
         });
 
     console.warn('[fetch-put-body       ] ', url, body);
-    return _fetch(fetchPromise, config.fetch_timout).then(filterStatus).then(stopProgress).catch(filterError);
+    return _fetch(fetchPromise, config.fetch_timout).then(filterStatus).then(stopProgress).then(filterJSON).then(filterLogger).catch(filterError);
 }
 
 export function remove(url, body) {
-
+    console.warn('[fetch-delete-begin       ] ');
     var fetchPromise = fetch(url,
         {
             method: 'DELETE',
@@ -55,11 +55,12 @@ export function remove(url, body) {
         });
 
     console.warn('[fetch-delete-body    ] ', url, body);
-    return _fetch(fetchPromise, config.fetch_timout).then(filterStatus).then(stopProgress).catch(filterError);
+    return _fetch(fetchPromise, config.fetch_timout).then(filterStatus).then(stopProgress).then(filterJSON).then(filterLogger).catch(filterError);
 }
 
 
 function filterStatus(response) {
+    console.warn('[fetch-filter-status-begin       ] ');
     console.warn('[fetch-filter-status  ] ', response.url, response.status);
 
     if (response.status >= 200 && response.status < 300) {
@@ -67,46 +68,50 @@ function filterStatus(response) {
     }
 
     return response.json().then(resp => {
+        console.warn('[fetch-filter-status-fetch-error  ] ');
         throw new fetchError(resp.error.code, resp.error.message);
     }).catch(e => {
 
         if (e instanceof fetchError) {
             throw e;
         }
-
+        console.warn('[fetch-filter-status-network-error  ] ');
         throw new netWorkError(response.status);
     });
 
 }
 
 function filterJSON(response) {
-    console.warn('[fetch-filter-tojson  ] ');
-    return response.json();
+    console.warn('[fetch-filter-serializer-begin     ] ');
+    return response.json().catch(e => {
+        return { response }
+    });
 }
 
 function filterLogger(response) {
-    console.warn('[fetch-filter-response] ', response)
+    console.warn('[fetch-filter-logger-begin     ] ');
+    console.warn('[fetch-filter-logger] ', response)
     return response;
 }
 
 function filterError(error) {
-
+    console.warn('[fetch-filter-error-begin     ] ', error);
     if (error instanceof fetchError) {
         console.warn('[fetch-filter-error   ] ', error.code);
-        message.warn(error.code);
-        return;
+        return { error };
     }
 
     if (error instanceof netWorkError) {
         console.warn('[fetch-filter-error   ] ', error.status);
-        message.error('服务器繁忙，请稍候再试。');
-        return;
+        return { error };
     }
+
 }
 
 function stopProgress(response) {
-    console.warn('[fetch-filter-progress]  nprogress done.');
+    console.warn('[fetch-filter-stop-progress-begin     ] ');
     NProgress.done(true);
+    console.warn('[fetch-filter-stop-progress]  nprogress done.');
     return response;
 }
 
