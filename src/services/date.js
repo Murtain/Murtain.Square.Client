@@ -1,5 +1,5 @@
 
-export function get_time() {
+export function GET_TIME() {
 
     var date = new Date();
     var hour = date.getHours();
@@ -8,7 +8,7 @@ export function get_time() {
     return (hour < 10 ? '0' + hour : hour) + ':' + (minutes < 10 ? '0' + minutes : minutes);
 }
 
-export function get_date() {
+export function GET_DATE() {
 
 
     var date = new Date();
@@ -20,7 +20,7 @@ export function get_date() {
     return month + "月" + day + "日" + " 星期" + week[new Date().getDay()];
 }
 
-export function get_welcome() {
+export function GET_WELCOME() {
 
     var date = new Date();
     var hour = date.getHours();

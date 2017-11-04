@@ -1,0 +1,14 @@
+
+
+.btn_container{
+    
+}
+.btn_authorize{
+    display: inline-block;
+    padding: 15px 20px;
+    color: white;
+ }
+
+.btn_authorize:hover{
+    color: white;
+}

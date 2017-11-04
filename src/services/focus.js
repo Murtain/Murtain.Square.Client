@@ -1,27 +1,27 @@
 
 import * as fetchRequest from './request';
-import config from '../configs';
+import constants from '../configs/constants';
 
-export function fetch_focus_post(focus) {
-    return fetchRequest.post(config.domain + '/focus', focus);
+export function FETCH_FOCUS_POST(focus) {
+    return fetchRequest.post(constants.DOMAIN + '/focus', focus);
 }
 
-export function fetch_focus_complate_put(id) {
-    return fetchRequest.put(config.domain + '/focus-complete/' + id);
+export function FETCH_FOCUS_COMPLATE_PUT(id) {
+    return fetchRequest.put(constants.DOMAIN + '/focus-complete/' + id);
 }
 
-export function fetch_focus_star_put(id) {
-    return fetchRequest.put(config.domain + '/focus-star/' + id);
+export function FETCH_FOCUS_STAR_PUT(id) {
+    return fetchRequest.put(constants.DOMAIN + '/focus-star/' + id);
 }
 
-export function fetch_focus_delete(id) {
-    return fetchRequest.remove(config.domain + '/focus/' + id);
+export function FETCH_FOCUS_DELETE(id) {
+    return fetchRequest.remove(constants.DOMAIN + '/focus/' + id);
 }
 
-export function fetch_focus() {
-    return fetchRequest.get(config.domain + '/focus');
+export function FETCH_FOCUS() {
+    return fetchRequest.get(constants.DOMAIN + '/focus');
 }
 
-export function fetch_focus_now() {
-    return fetchRequest.get(config.domain + '/focus-star');
+export function FETCH_FOCUS_NOW() {
+    return fetchRequest.get(constants.DOMAIN + '/focus-star');
 }

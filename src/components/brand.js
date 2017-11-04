@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const Loading = props => {
+const Brand = props => {
     return (
-        <div>
+        <div> 
             
         </div>
     );
 };
-export default Loading;
+export default Brand;

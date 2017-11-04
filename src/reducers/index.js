@@ -3,15 +3,27 @@ import { combineReducers } from 'redux';
 import { reducer as oidcReducer } from 'redux-oidc';
 
 
-import subscriptionsReducer from './subscriptions';
 import indexReducer from './home';
+
+import focus from './focus';
+import sentence from './sentence';
+import weather from './weather';
+import clock from './clock';
+import settings from './settings';
 
 const reducer = combineReducers(
     {
         routing: routerReducer,
-        oidc: oidcReducer,
-        subscriptions: subscriptionsReducer,
         index: indexReducer,
+
+
+        oidc: oidcReducer,
+
+        focus: focus,
+        sentence: sentence,
+        weather: weather,
+        clock: clock,
+        settings: settings,
     }
 );
 

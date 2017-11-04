@@ -18,7 +18,7 @@ export function FetchTimeoutError() {
 }
 
 
-export function ErrorHandler(error) {
+export function toast(error) {
 
     if (error instanceof UserFriendlyError) {
         message.error(error.message);

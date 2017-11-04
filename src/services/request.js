@@ -1,13 +1,13 @@
 import NProgress from 'nprogress';
 import { UserFriendlyError, NetWorkError, FetchError, FetchTimeoutError, JsonSerializeError } from './errors';
 
-import config from '../configs';
+import constants from '../configs/constants';
 
 
 export function get(url) {
 
     var fetchPromise = fetch(url);
-    return _fetch(fetchPromise, config.fetch_timout).then(filterStatus).then(stopProgress).then(filterJSON).then(filterLogger).catch(filterError);
+    return _fetch(fetchPromise, constants.FETCH_TIMOUT).then(filterStatus).then(stopProgress).then(filterJSON).then(filterLogger).catch(filterError);
 }
 
 export function post(url, body) {
@@ -23,7 +23,7 @@ export function post(url, body) {
         });
 
     console.warn('[fetch-post-body      ] ', url, body);
-    return _fetch(fetchPromise, config.fetch_timout).then(filterStatus).then(stopProgress).then(filterJSON).then(filterLogger).catch(filterError);
+    return _fetch(fetchPromise, constants.FETCH_TIMOUT).then(filterStatus).then(stopProgress).then(filterJSON).then(filterLogger).catch(filterError);
 }
 
 export function put(url, body) {
@@ -39,7 +39,7 @@ export function put(url, body) {
         });
 
     console.warn('[fetch-put-body       ] ', url, body);
-    return _fetch(fetchPromise, config.fetch_timout).then(filterStatus).then(stopProgress).then(filterJSON).then(filterLogger).catch(filterError);
+    return _fetch(fetchPromise, constants.FETCH_TIMOUT).then(filterStatus).then(stopProgress).then(filterJSON).then(filterLogger).catch(filterError);
 }
 
 export function remove(url, body) {
@@ -55,7 +55,7 @@ export function remove(url, body) {
         });
 
     console.warn('[fetch-delete-body    ] ', url, body);
-    return _fetch(fetchPromise, config.fetch_timout).then(filterStatus).then(stopProgress).then(filterJSON).then(filterLogger).catch(filterError);
+    return _fetch(fetchPromise, constants.FETCH_TIMOUT).then(filterStatus).then(stopProgress).then(filterJSON).then(filterLogger).catch(filterError);
 }
 
 
